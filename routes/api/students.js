@@ -103,4 +103,15 @@ router.post(
     }
   }
 );
+// route GET api/students/get-companies
+// desc Student view companies
+// access public
+router.get("/get-companies", async (req, res) => {
+  try {
+    const company = await Company.find();
+    res.json(company);
+  } catch (error) {
+    res.status(500).send("Server Error");
+  }
+});
 module.exports = router;

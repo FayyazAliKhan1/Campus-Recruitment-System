@@ -18,7 +18,7 @@ router.get("/", auth, async (req, res) => {
   }
 });
 
-// route POST api/students
+// route POST api/auth
 // desc Authenticate Student and Get token
 // access public
 router.post(

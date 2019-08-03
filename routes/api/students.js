@@ -6,6 +6,8 @@ const gravatar = require("gravatar");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const config = require("config");
+const auth = require("../../middleware/auth");
+
 // route POST api/students
 // desc Register Student
 // access public
@@ -105,13 +107,38 @@ router.post(
 );
 // route GET api/students/get-companies
 // desc Student view companies
-// access public
-router.get("/get-companies", async (req, res) => {
-  try {
-    const company = await Company.find();
-    res.json(company);
-  } catch (error) {
-    res.status(500).send("Server Error");
-  }
-});
+// access private
+// router.get("/get-companies", auth, async (req, res) => {
+//   try {
+//     const company = await Company.find();
+//     res.json(company);
+//   } catch (error) {
+//     res.status(500).send("Server Error");
+//   }
+// });
+// route POST api/students/apply-job
+// desc apply for job
+// access private
+// router.post(
+//   "/apply-job",
+//   [
+//     auth,
+//     check("job_name", "Job Name is Required")
+//       .not()
+//       .isEmpty(),
+//     check("eligible_c", "Eligiblity criteria is Required")
+//       .not()
+//       .isEmpty(),
+//     check("description", "Description is Required")
+//       .not()
+//       .isEmpty()
+//   ],
+//   async (req, res) => {
+//     const errors = validationResult(req);
+//     if (!errors.isEmpty()) {
+//       return res.status(400).json({ errors: errors.array() });
+//     }
+
+//   }
+// );
 module.exports = router;

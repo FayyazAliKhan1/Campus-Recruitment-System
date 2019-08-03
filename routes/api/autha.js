@@ -7,7 +7,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const config = require("config");
 // route GET api/authc
-// desc get current Company
+// desc admin
 // access Private
 router.get("/", auth, async (req, res) => {
   try {

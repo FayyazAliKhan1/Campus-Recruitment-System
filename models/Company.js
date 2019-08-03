@@ -28,6 +28,9 @@ const companySchema = mongoose.Schema({
     type: String,
     required: true
   },
+  avatar: {
+    type: String
+  },
   address: {
     type: String,
     required: true

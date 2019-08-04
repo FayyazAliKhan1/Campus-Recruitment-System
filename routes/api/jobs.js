@@ -70,6 +70,29 @@ router.post(
     }
   }
 );
+// route GET api/jobs/comp1/comp_id
+// desc update Job
+// access private
+router.get("/comp1/:comp_id", async (req, res) => {
+  try {
+    const jobs = await Job.find({ company: req.params.comp_id }).populate(
+      "companies",
+      ["name", "avatar"]
+    );
+    if (!jobs) {
+      return res
+        .status(400)
+        .json({ msg: "There is no Job Vacancy Posted by this company" });
+    }
+    res.json(jobs);
+  } catch (error) {
+    console.error(error.message);
+    if (error.kind == "ObjectId") {
+      return res.status(400).json({ msg: "Job not found" });
+    }
+    res.status(500).send("Server error");
+  }
+});
 // route POST api/jobs
 // desc update Job
 // access private

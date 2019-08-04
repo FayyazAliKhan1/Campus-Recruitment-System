@@ -149,7 +149,7 @@ router.get("/comp1/:comp_id", async (req, res) => {
 //   }
 // );
 // route GeT api/jobs
-// desc Get all jobs posted by company
+// desc Get all jobs posted by companies
 // access public
 router.get("/", async (req, res) => {
   try {

@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { check, validationResult } = require("express-validator");
 const Student = require("../../models/Student");
+const Job = require("../../models/Jobs");
 const gravatar = require("gravatar");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -116,29 +117,68 @@ router.post(
 //     res.status(500).send("Server Error");
 //   }
 // });
-// route POST api/students/apply-job
+// route POST api/students/apply-job/:job_id
 // desc apply for job
 // access private
-// router.post(
-//   "/apply-job",
-//   [
-//     auth,
-//     check("job_name", "Job Name is Required")
-//       .not()
-//       .isEmpty(),
-//     check("eligible_c", "Eligiblity criteria is Required")
-//       .not()
-//       .isEmpty(),
-//     check("description", "Description is Required")
-//       .not()
-//       .isEmpty()
-//   ],
-//   async (req, res) => {
-//     const errors = validationResult(req);
-//     if (!errors.isEmpty()) {
-//       return res.status(400).json({ errors: errors.array() });
-//     }
-
-//   }
-// );
+router.put(
+  "/apply-job/:job_id",
+  [
+    auth,
+    [
+      check("title", "Title is Required")
+        .not()
+        .isEmpty(),
+      check("company", "Company is Required")
+        .not()
+        .isEmpty(),
+      check("from", "From date is Required")
+        .not()
+        .isEmpty(),
+      check("skills", "Skills is Required")
+        .not()
+        .isEmpty()
+    ]
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    const {
+      skills,
+      title,
+      location,
+      company,
+      from,
+      to,
+      description
+    } = req.body;
+    const newa = {
+      skills,
+      title,
+      location,
+      company,
+      from,
+      to,
+      description
+    };
+    try {
+      const job = await Job.findById(req.params.job_id);
+      if (
+        job.apply.filter(app => app.student.toString() === req.student.id)
+          .length > 0
+      ) {
+        return res
+          .status(400)
+          .json({ msg: "you have already applied this job" });
+      }
+      job.apply.unshift(newa);
+      await job.save();
+      res.json(job.apply);
+    } catch (error) {
+      console.error(error.message);
+      res.status(500).send("Server Error");
+    }
+  }
+);
 module.exports = router;

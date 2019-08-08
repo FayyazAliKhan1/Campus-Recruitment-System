@@ -59,7 +59,9 @@ router.post(
     try {
       let job = await Job.findOne({ job_name });
       if (job) {
-        res.status(500).json({ errors: [{ msg: "Job already Posted" }] });
+        return res
+          .status(500)
+          .json({ errors: [{ msg: "Job already Posted" }] });
       }
       job = new Job(jobFields);
       await job.save();
@@ -185,14 +187,27 @@ router.get("/comp/:comp_id", async (req, res) => {
     res.status(500).send("Server error");
   }
 });
-// route Delete api/jobs
-// desc delete
-// access public
-router.delete("/", auth, async (req, res) => {
+// route Delete api/jobs/comp1/:job_id
+// desc Route for company to delete it's job by id
+// access private
+router.delete("/comp1/:job_id", auth, async (req, res) => {
   try {
-    await Job.findOneAndRemove({ company: req.company.id });
+    await Job.findOneAndRemove({ _id: req.params.job_id });
 
     res.json({ msg: "Job Deleted" });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Server Error");
+  }
+});
+// route Delete api/jobs/:comp1
+// desc Route for company to delete it's all jobs by id
+// access private
+router.delete("/:comp1", auth, async (req, res) => {
+  try {
+    await Job.deleteMany({ company: req.params.comp1 });
+
+    res.json({ msg: "Deleted" });
   } catch (error) {
     console.error(error.message);
     res.status(500).send("Server Error");

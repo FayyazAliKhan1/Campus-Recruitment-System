@@ -3,6 +3,7 @@ const router = express.Router();
 const { check, validationResult } = require("express-validator");
 const Student = require("../../models/Student");
 const Job = require("../../models/Jobs");
+const Company = require("../../models/Company");
 const gravatar = require("gravatar");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -154,7 +155,9 @@ router.put(
       description
     } = req.body;
     const newa = {
-      skills,
+      skills
+    };
+    const newExp = {
       title,
       location,
       company,
@@ -163,7 +166,10 @@ router.put(
       description
     };
     try {
-      const job = await Job.findById(req.params.job_id);
+      const job = await Job.findById(req.params.job_id).populate("students", [
+        "name",
+        "avatar"
+      ]);
       if (
         job.apply.filter(app => app.student.toString() === req.student.id)
           .length > 0
@@ -173,6 +179,7 @@ router.put(
           .json({ msg: "you have already applied this job" });
       }
       job.apply.unshift(newa);
+      //job.apply.experience.unshift(newExp);
       await job.save();
       res.json(job.apply);
     } catch (error) {
@@ -181,4 +188,16 @@ router.put(
     }
   }
 );
+// route POST api/students/companies
+// desc view all companies
+// access private
+router.get("/companies", auth, async (req, res) => {
+  try {
+    const comp = await Company.find();
+    res.json(comp);
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Server Error");
+  }
+});
 module.exports = router;

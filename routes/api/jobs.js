@@ -71,7 +71,7 @@ router.post(
   }
 );
 // route GET api/jobs/comp1/comp_id
-// desc update Job
+// desc get all Jobs
 // access private
 router.get("/comp1/:comp_id", async (req, res) => {
   try {
@@ -93,61 +93,62 @@ router.get("/comp1/:comp_id", async (req, res) => {
     res.status(500).send("Server error");
   }
 });
-// route POST api/jobs
+// route POST api/jobs/comp1/:job_id
 // desc update Job
 // access private
-// router.post(
-//   "/",
-//   [
-//     auth,
-//     [
-//       check("job_name", "Job Name is Required")
-//         .not()
-//         .isEmpty(),
-//       check("eligible_c", "Eligibility is Required")
-//         .not()
-//         .isEmpty(),
-//       check("salary", "Salary is Required")
-//         .not()
-//         .isEmpty(),
-//       check("description", "Description is Required")
-//         .not()
-//         .isEmpty()
-//     ]
-//   ],
-//   async (req, res) => {
-//     const errors = validationResult(req);
-//     if (!errors.isEmpty()) {
-//       return res.status(400).json({ errors: errors.array() });
-//     }
-//     const { job_name, eligible_c, salary, description } = req.body;
-//     const jobFields = {};
-//     jobFields.company = req.company.id;
-//     if (job_name) jobFields.job_name = job_name;
-//     if (eligible_c) jobFields.eligible_c = eligible_c;
-//     if (salary) jobFields.salary = salary;
-//     if (description) jobFields.description = description;
-//     try {
-//       let job = await Job.findOne({ company: req.company.id }); //look for a job by the company
-//       if (job) {
-//         //Update
-//         job = await Job.findOneAndUpdate(
-//           { company: req.company.id },
-//           { $set: jobFields },
-//           { new: true }
-//         );
-//         return res.json(job);
-//       }
-//       //Create
-//       job = new Job(jobFields);
-//       await job.save();
-//       res.json(job);
-//     } catch (error) {
-//       console.error(error.message);
-//       res.status(500).send("Server Error");
-//     }
-//   }
-// );
+router.put(
+  "/comp1/:job_id",
+  [
+    auth,
+    [
+      check("job_name", "Job Name is Required")
+        .not()
+        .isEmpty(),
+      check("eligible_c", "Eligibility is Required")
+        .not()
+        .isEmpty(),
+      check("salary", "Salary is Required")
+        .not()
+        .isEmpty(),
+      check("description", "Description is Required")
+        .not()
+        .isEmpty()
+    ]
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    const { job_name, eligible_c, salary, description } = req.body;
+    // const jobFields = {};
+    // jobFields.company = req.company.id;
+    // if (job_name) jobFields.job_name = job_name;
+    // if (eligible_c) jobFields.eligible_c = eligible_c;
+    // if (salary) jobFields.salary = salary;
+    // if (description) jobFields.description = description;
+    const newJob = {
+      job_name,
+      eligible_c,
+      salary,
+      description
+    };
+    try {
+      let job = await Job.findOneAndUpdate(
+        {
+          _id: req.params.job_id
+        },
+        { $set: newJob },
+        { new: true }
+      ); //look for a job by the company
+
+      res.json(job);
+    } catch (error) {
+      console.error(error.message);
+      res.status(500).send("Server Error");
+    }
+  }
+);
 // route GeT api/jobs
 // desc Get all jobs posted by companies
 // access public

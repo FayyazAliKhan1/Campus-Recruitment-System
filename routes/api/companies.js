@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 const { check, validationResult } = require("express-validator");
 const Company = require("../../models/Company");
+const Student = require("../../models/Student");
+const Job = require("../../models/Jobs");
 const gravatar = require("gravatar");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -74,6 +76,7 @@ router.post(
         email,
         password,
         website,
+        avatar,
         address,
         country,
         city,
@@ -107,4 +110,17 @@ router.post(
     }
   }
 );
+// route GET api/companies/app_students/:job_id
+// desc View applied students
+// access private
+
+// router.get('/app_students/:job_id', auth, (req, res) => {
+//   try {
+//     const job = await Job.findById(req.student.id)
+//     const student = await Student.find()
+//   } catch (error) {
+//     console.error(error.message)
+//     res.status(500).send('Server error')
+//   }
+// })
 module.exports = router;

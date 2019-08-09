@@ -5,6 +5,9 @@ const bcrypt = require("bcrypt");
 const gravatar = require("gravatar");
 const jwt = require("jsonwebtoken");
 const Admin = require("../../models/Admin");
+const Student = require("../../models/Student");
+const Company = require("../../models/Company");
+const auth = require("../../middleware/auth");
 const config = require("config");
 // route POST api/admin
 // desc Test route
@@ -70,4 +73,55 @@ router.post(
     }
   }
 );
+// route GET api/admin
+// desc GET all registered students data
+// access private
+router.get("/", auth, async (req, res) => {
+  try {
+    const student = await Student.find();
+    res.json(student);
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Server error");
+  }
+});
+// route Delete api/admin/std/:std_id
+// desc delete student
+// access private
+router.delete("/std/:std_id", auth, async (req, res) => {
+  try {
+    await Student.findOneAndRemove({ _id: req.params.std_id });
+
+    res.json({ msg: "Student Deleted" });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Server error");
+  }
+});
+// route Delete api/admin/cmp/:cmp_id
+// desc delete company
+// access private
+router.delete("/cmp/:cmp_id", auth, async (req, res) => {
+  try {
+    await Company.findOneAndRemove({ _id: req.params.cmp_id });
+
+    res.json({ msg: "Company Deleted" });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Server error");
+  }
+});
+// route Delete api/admin/jobs/:job_id
+// desc delete job
+// access private
+router.delete("/jobs/:job_id", auth, async (req, res) => {
+  try {
+    await Job.findOneAndRemove({ _id: req.params.job_id });
+
+    res.json({ msg: "Job Deleted" });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Server error");
+  }
+});
 module.exports = router;

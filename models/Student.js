@@ -29,10 +29,6 @@ const StudentSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  skills: {
-    type: [String],
-    required: true
-  },
   date: {
     type: Date,
     default: Date.now

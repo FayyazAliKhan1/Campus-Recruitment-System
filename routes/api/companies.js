@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { check, validationResult } = require("express-validator");
 const Company = require("../../models/Company");
+const auth = require("../../middleware/auth");
 const Student = require("../../models/Student");
 const Job = require("../../models/Jobs");
 const gravatar = require("gravatar");
@@ -104,6 +105,61 @@ router.post(
           res.json({ token });
         }
       );
+    } catch (error) {
+      console.error(error.message);
+      res.status(500).send("Server Error");
+    }
+  }
+);
+// route POST api/companies/post_job/:comp_id
+// desc Create/Post Job
+// access private
+router.put(
+  "/post_job/:comp_id",
+  [
+    auth,
+    [
+      check("job_name", "Job Name is Required")
+        .not()
+        .isEmpty(),
+      check("eligible_c", "Eligibility is Required")
+        .not()
+        .isEmpty(),
+      check("salary", "Salary is Required")
+        .not()
+        .isEmpty(),
+      check("description", "Description is Required")
+        .not()
+        .isEmpty()
+    ]
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    const { job_name, eligible_c, salary, description } = req.body;
+    const newJob = { job_name, eligible_c, salary, description };
+    // const jobFields = {};
+    // jobFields.company = req.company.id;
+    // if (job_name) jobFields.job_name = job_name;
+    // if (eligible_c) jobFields.eligible_c = eligible_c;
+    // if (salary) jobFields.salary = salary;
+    // if (description) jobFields.description = description;
+    try {
+      let company = await Company.findById({ _id: req.params.comp_id });
+      // if (job) {
+      //   return res
+      //     .status(500)
+      //     .json({ errors: [{ msg: "Job already Posted" }] });
+      // }
+      if (!company) {
+        return res.status(400).send("No Company Found");
+      }
+      company.post_job.unshift(newJob);
+      //job = new Job(jobFields);
+      await company.save();
+      res.json(company);
     } catch (error) {
       console.error(error.message);
       res.status(500).send("Server Error");

@@ -111,11 +111,11 @@ router.post(
     }
   }
 );
-// route POST api/companies/post_job/:comp_id
+// route POST api/companies/post_job
 // desc Create/Post Job
 // access private
-router.put(
-  "/post_job/:comp_id",
+router.post(
+  "/post_job",
   [
     auth,
     [
@@ -139,33 +139,46 @@ router.put(
       return res.status(400).json({ errors: errors.array() });
     }
     const { job_name, eligible_c, salary, description } = req.body;
-    const newJob = { job_name, eligible_c, salary, description };
-    // const jobFields = {};
-    // jobFields.company = req.company.id;
-    // if (job_name) jobFields.job_name = job_name;
-    // if (eligible_c) jobFields.eligible_c = eligible_c;
-    // if (salary) jobFields.salary = salary;
-    // if (description) jobFields.description = description;
     try {
-      let company = await Company.findById({ _id: req.params.comp_id });
-      // if (job) {
-      //   return res
-      //     .status(500)
-      //     .json({ errors: [{ msg: "Job already Posted" }] });
-      // }
-      if (!company) {
-        return res.status(400).send("No Company Found");
+      let job = await Job.findOne({ company: req.company.id });
+
+      if (job) {
+        return res
+          .status(400)
+          .json({ errors: [{ msg: "Job already Exists" }] });
       }
-      company.post_job.unshift(newJob);
-      //job = new Job(jobFields);
-      await company.save();
-      res.json(company);
+      job = new Job({
+        job_name,
+        eligible_c,
+        salary,
+        description,
+        company: req.company.id
+      }).populate("companies", ["name"]);
+      await job.save();
+      res.json(job);
     } catch (error) {
       console.error(error.message);
       res.status(500).send("Server Error");
     }
   }
 );
+// route Delete api/companies/post_job/:comp_id/:job_id
+// desc Route for company to delete it's job by id
+// access private
+router.delete("/post_job/:comp_id/:job_id", auth, async (req, res) => {
+  try {
+    const company = await Company.findById(req.params.comp_id);
+    const removeIndex = company.post_job
+      .map(job => job.id)
+      .indexOf(req.params.job_id);
+    company.post_job.splice(removeIndex, 1);
+    await company.save();
+    res.json(company);
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Server Error");
+  }
+});
 // route GET api/companies/app_students/:job_id
 // desc View applied students
 // access private

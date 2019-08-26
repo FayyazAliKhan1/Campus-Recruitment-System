@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const jobSchema = mongoose.Schema({
   company: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "company"
+    ref: "companies"
   },
   job_name: {
     type: String,
@@ -23,54 +23,25 @@ const jobSchema = mongoose.Schema({
   date: {
     type: Date,
     default: Date.now
-  },
-  apply: [
-    {
-      student: {
-        type: mongoose.Schema.Types.ObjectId,
-        refs: "students"
-      },
-      skills: {
-        type: [String],
-        required: true
-      },
-      avatar: {
-        type: String
-      },
-      experience: [
-        {
-          title: {
-            type: String,
-            required: true
-          },
-          company: {
-            type: String,
-            required: true
-          },
-          location: {
-            type: String
-          },
-          from: {
-            type: Date,
-            required: true
-          },
-          to: {
-            type: Date
-          },
-          current: {
-            type: Boolean,
-            default: false
-          },
-          description: {
-            type: String
-          }
-        }
-      ],
-      date: {
-        type: Date,
-        default: Date.now()
-      }
-    }
-  ]
+  }
+  // apply: [
+  //   {
+  //     student: {
+  //       type: mongoose.Schema.Types.ObjectId,
+  //       refs: "students"
+  //     },
+  //     skills: {
+  //       type: [String],
+  //       required: true
+  //     },
+  //     avatar: {
+  //       type: String
+  //     },
+  //     date: {
+  //       type: Date,
+  //       default: Date.now()
+  //     }
+  //   }
+  // ]
 });
 module.exports = Job = mongoose.model("jobs", jobSchema);

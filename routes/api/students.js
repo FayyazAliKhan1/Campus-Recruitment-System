@@ -4,6 +4,7 @@ const { check, validationResult } = require("express-validator");
 const Student = require("../../models/Student");
 const Job = require("../../models/Jobs");
 const Company = require("../../models/Company");
+const Applied = require("../../models/Applied");
 const gravatar = require("gravatar");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -107,22 +108,12 @@ router.post(
     }
   }
 );
-// route GET api/students/get-companies
-// desc Student view companies
-// access private
-// router.get("/get-companies", auth, async (req, res) => {
-//   try {
-//     const company = await Company.find();
-//     res.json(company);
-//   } catch (error) {
-//     res.status(500).send("Server Error");
-//   }
-// });
-// route POST api/students/apply-job/:job_id
+
+// route POST api/students/apply_job/:job_id
 // desc apply for job
 // access private
-router.put(
-  "/apply-job/:job_id",
+router.post(
+  "/apply_job/:job_id",
   [
     auth,
     [
@@ -137,29 +128,34 @@ router.put(
       return res.status(400).json({ errors: errors.array() });
     }
     const { skills } = req.body;
-
-    const newa = {};
-    if (skills) {
-      newa.skills = skills.split(",").map(skill => skill.trim());
-    }
+    const Skills = skills.split(",").map(skill => skill.trim());
     try {
-      const job = await Job.findById(req.params.job_id).populate("students", [
-        "name",
-        "avatar"
-      ]);
+      let app = await Applied.findOne({
+        student: req.student.id,
+        job: req.params.job_id
+      });
       //Check if student has already applied
-      if (
-        job.apply.filter(app => app.student.toString() === req.student.id)
-          .length > 0
-      ) {
+      if (app) {
         return res
           .status(400)
           .json({ msg: "you have already applied this job" });
       }
-      job.apply.unshift(newa);
+      const student = await Student.findById(req.student.id).select(
+        "-password"
+      );
+      const job = await Job.findById(req.params.job_id).select("job_name");
+      app = new Applied({
+        skills: Skills,
+        student_name: student.name,
+        avatar: student.avatar,
+        qualification: student.qualification,
+        student: req.student.id,
+        job_name: job.job_name,
+        job: req.params.job_id
+      });
 
-      await job.save();
-      res.json(job.apply);
+      const newApplied = await app.save();
+      res.json(newApplied);
     } catch (error) {
       console.error(error.message);
       res.status(500).send("Server Error");
@@ -225,4 +221,46 @@ router.get("/companies", auth, async (req, res) => {
     res.status(500).send("Server Error");
   }
 });
+//route POST api/students/apply_job/:job_id
+//desc apply for job
+//access private
+router.put(
+  "/apply_job/:job_id",
+  [
+    auth,
+    [
+      check("skills", "skills is Required")
+        .not()
+        .isEmpty()
+    ]
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.status(400).json({ errors: errors.array() });
+    }
+    const { skills } = req.body;
+    const newa = {};
+    newa.student = req.student.id;
+    //newa.populate("students", ["name", "avatar"]);
+    if (skills) {
+      newa.skills = skills.split(",").map(skill => skill.trim());
+    }
+    try {
+      const student = await Student.findOne({ _id: req.student.id }).populate(
+        "jobs",
+        ["company", "job_name"]
+      );
+      if (!student) {
+        return res.status(400).send("No Student found");
+      }
+      student.applied.unshift(newa);
+      await student.save();
+      res.json(student);
+    } catch (error) {
+      console.error(error.message);
+      res.status(500).send("Server Error");
+    }
+  }
+);
 module.exports = router;

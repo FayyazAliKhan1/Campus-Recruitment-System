@@ -4,14 +4,16 @@ const { check, validationResult } = require("express-validator");
 const bcrypt = require("bcrypt");
 const gravatar = require("gravatar");
 const jwt = require("jsonwebtoken");
-const Admin = require("../../models/Admin");
 const Student = require("../../models/Student");
 const Company = require("../../models/Company");
+const Applied = require("../../models/Applied");
+const Job = require("../../models/Jobs");
 const auth = require("../../middleware/auth");
 const config = require("config");
 // route POST api/admin
 // desc Test route
 // access public
+
 router.post(
   "/",
   [
@@ -73,16 +75,30 @@ router.post(
     }
   }
 );
-// route GET api/admin
+// route GET api/admin/students
 // desc GET all registered students data
 // access private
-router.get("/", auth, async (req, res) => {
+router.get("/students", auth, async (req, res) => {
+  // if(req.admin){
+  //   const admin = auth
+  // }
   try {
-    const student = await Student.find();
-    res.json(student);
+    const students = await Student.find();
+    res.json(students.filter(student => student.isAdmin != true));
   } catch (error) {
     console.error(error.message);
     res.status(500).send("Server error");
+  }
+});
+// route GET api/admin/companies
+// desc get all companies
+// access private
+router.get("/companies", auth, async (req, res) => {
+  try {
+    const company = await Company.find();
+    res.json(company);
+  } catch (error) {
+    res.status(500).send("Server Error");
   }
 });
 // route Delete api/admin/std/:std_id
@@ -91,7 +107,7 @@ router.get("/", auth, async (req, res) => {
 router.delete("/std/:std_id", auth, async (req, res) => {
   try {
     await Student.findOneAndRemove({ _id: req.params.std_id });
-
+    await Applied.findByIdAndDelete(req.params.id);
     res.json({ msg: "Student Deleted" });
   } catch (error) {
     console.error(error.message);
@@ -104,7 +120,7 @@ router.delete("/std/:std_id", auth, async (req, res) => {
 router.delete("/cmp/:cmp_id", auth, async (req, res) => {
   try {
     await Company.findOneAndRemove({ _id: req.params.cmp_id });
-
+    await Job.findByIdAndDelete(req.params.cmp_id);
     res.json({ msg: "Company Deleted" });
   } catch (error) {
     console.error(error.message);

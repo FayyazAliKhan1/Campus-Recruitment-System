@@ -9,16 +9,20 @@ const profileSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "companies"
   },
-  company: {
+  company_name: {
     type: String
   },
   website: {
     type: String
   },
-  location: {
+  higherfor: {
     type: String
   },
   status: {
+    type: String,
+    required: true
+  },
+  location: {
     type: String,
     required: true
   },
@@ -61,6 +65,22 @@ const profileSchema = new mongoose.Schema({
       }
     }
   ],
+  image: {
+    data: Buffer,
+    ContentType: String
+  },
+  criteria: {
+    type: String
+  },
+  lastDate: {
+    type: Date
+  },
+  interviewDate: {
+    type: Date
+  },
+  bond: {
+    type: Number
+  },
   education: [
     {
       school: {

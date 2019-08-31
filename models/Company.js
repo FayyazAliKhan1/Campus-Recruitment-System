@@ -43,33 +43,9 @@ const companySchema = mongoose.Schema({
     type: String,
     required: true
   },
-  // post_job: [
-  //   {
-  //     job_name: {
-  //       type: String,
-  //       required: true
-  //     },
-  //     eligible_c: {
-  //       type: String,
-  //       required: true
-  //     },
-  //     salary: {
-  //       type: Number,
-  //       required: true
-  //     },
-  //     description: {
-  //       type: String,
-  //       required: true
-  //     },
-  //     date: {
-  //       type: Date,
-  //       default: Date.now
-  //     }
-  //   }
-  // ],
   date: {
     type: Date,
     default: Date.now
   }
 });
-module.exports = Company = mongoose.model("company", companySchema);
+module.exports = Company = mongoose.model("companies", companySchema);

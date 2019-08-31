@@ -35,4 +35,4 @@ let Applied = new Schema({
     default: Date.now
   }
 });
-module.exports = Applied = mongoose.model("applied", Applied);
+module.exports = Applied = mongoose.model("applieds", Applied);

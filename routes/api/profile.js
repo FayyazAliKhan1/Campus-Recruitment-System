@@ -75,7 +75,7 @@ router.post(
       // Create Profile if not
       profile = new Profile(profileFields);
       await profile.save();
-      return res.json(profile);
+      res.json(profile);
     } catch (error) {
       console.error(error.message);
       res.status(500).send("Server Error");
@@ -133,7 +133,7 @@ router.post(
       profileFields.website = company.website;
       profileFields.location = company.address;
       profileFields.bio = company.description;
-      let profile = await Profile.findOne({ student: req.student.id });
+      let profile = await Profile.findOne({ company: req.company.id });
 
       if (profile) {
         profile = await Profile.findOneAndUpdate(
@@ -153,4 +153,41 @@ router.post(
     }
   }
 );
+// route GET api/profile/me
+// desc Get Current Student profile
+// access private
+// using token
+router.get("/me", auth, async (req, res) => {
+  try {
+    const profile = await Profile.findOne({ student: req.student.id }).populate(
+      "students",
+      ["name", "avatar", "qualification"]
+    );
+    if (!profile) {
+      return res.status(400).json({ msg: "There is no Profile for the User" });
+    }
+    res.json(profile);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error...");
+  }
+});
+// route GET api/profile/mec
+// desc Get Current Company profile
+// access private
+router.get("/mec", auth, async (req, res) => {
+  try {
+    const profile = await Profile.findOne({ company: req.student.id }).populate(
+      "companies",
+      ["country", "avatar", "city"]
+    );
+    if (!profile) {
+      return res.status(400).json({ msg: "There is no Profile for the User" });
+    }
+    res.json(profile);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error...");
+  }
+});
 module.exports = router;

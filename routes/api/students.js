@@ -33,9 +33,6 @@ router.post(
     check("address", "Address is Required")
       .not()
       .isEmpty(),
-    check("skills", "skills is Required")
-      .not()
-      .isEmpty(),
     check("age", "Age is Required")
       .not()
       .isEmpty(),
@@ -162,53 +159,6 @@ router.post(
     }
   }
 );
-// route POST api/students/addexperience/:job_id
-// desc view all companies
-// access private
-router.put(
-  "/addexperience/:job_id",
-  [
-    auth,
-    [
-      check("title", "Title is Required")
-        .not()
-        .isEmpty(),
-      check("company", "Company is Required")
-        .not()
-        .isEmpty(),
-      check("from", "From date is Required")
-        .not()
-        .isEmpty()
-    ]
-  ],
-  async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      res.status(400).json({ errors: errors.array() });
-    }
-    const { title, location, company, from, to, description } = req.body;
-    const newExp = {
-      title,
-      location,
-      company,
-      from,
-      to,
-      description
-    };
-    try {
-      const job = await Job.findById(req.params.job_id);
-      if (!job) {
-        res.status(400).send("No job found");
-      }
-      job.apply.experience.push(newExp);
-      await job.save();
-      res.json(job.apply);
-    } catch (error) {
-      console.error(error.message);
-      res.status(500).send("Server Error");
-    }
-  }
-);
 // route POST api/students/companies
 // desc view all companies
 // access private
@@ -221,46 +171,5 @@ router.get("/companies", auth, async (req, res) => {
     res.status(500).send("Server Error");
   }
 });
-//route POST api/students/apply_job/:job_id
-//desc apply for job
-//access private
-router.put(
-  "/apply_job/:job_id",
-  [
-    auth,
-    [
-      check("skills", "skills is Required")
-        .not()
-        .isEmpty()
-    ]
-  ],
-  async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      res.status(400).json({ errors: errors.array() });
-    }
-    const { skills } = req.body;
-    const newa = {};
-    newa.student = req.student.id;
-    //newa.populate("students", ["name", "avatar"]);
-    if (skills) {
-      newa.skills = skills.split(",").map(skill => skill.trim());
-    }
-    try {
-      const student = await Student.findOne({ _id: req.student.id }).populate(
-        "jobs",
-        ["company", "job_name"]
-      );
-      if (!student) {
-        return res.status(400).send("No Student found");
-      }
-      student.applied.unshift(newa);
-      await student.save();
-      res.json(student);
-    } catch (error) {
-      console.error(error.message);
-      res.status(500).send("Server Error");
-    }
-  }
-);
+
 module.exports = router;

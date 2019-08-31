@@ -4,12 +4,15 @@ import {
   REGISTER_FAIL,
   REGISTER_SUCCESS,
   AUTH_ERROR,
-  USER_LOADED
+  USER_LOADED,
+  LOGIN_FAIL,
+  LOGIN_SUCCESS,
+  LOGOUT
 } from "./types";
 import setAuthToken from "../utils/setAuthToken";
 
-//load Student
-export const loadUsers = () => async dispatch => {
+//load Student and Company
+export const loadUser = () => async dispatch => {
   if (localStorage.token) {
     setAuthToken(localStorage.token);
   }
@@ -21,29 +24,29 @@ export const loadUsers = () => async dispatch => {
   }
 };
 //load Company
-export const loadUserc = () => async dispatch => {
-  if (localStorage.token) {
-    setAuthToken(localStorage.token);
-  }
-  try {
-    const res = await axios.get("/api/authc");
-    dispatch({ type: USER_LOADED, payload: res.data });
-  } catch (error) {
-    dispatch({ type: AUTH_ERROR });
-  }
-};
+// export const loadUser = () => async dispatch => {
+//   if (localStorage.token) {
+//     setAuthToken(localStorage.token);
+//   }
+//   try {
+//     const res = await axios.get("/api/authc");
+//     dispatch({ type: COMPANY_LOADED, payload: res.data });
+//   } catch (error) {
+//     dispatch({ type: AUTH_ERROR });
+//   }
+// };
 //load Admin
-export const loadUsera = () => async dispatch => {
-  if (localStorage.token) {
-    setAuthToken(localStorage.token);
-  }
-  try {
-    const res = await axios.get("/api/autha");
-    dispatch({ type: USER_LOADED, payload: res.data });
-  } catch (error) {
-    dispatch({ type: AUTH_ERROR });
-  }
-};
+// export const loadUsera = () => async dispatch => {
+//   if (localStorage.token) {
+//     setAuthToken(localStorage.token);
+//   }
+//   try {
+//     const res = await axios.get("/api/autha");
+//     dispatch({ type: ADMIN_LOADED, payload: res.data });
+//   } catch (error) {
+//     dispatch({ type: AUTH_ERROR });
+//   }
+// };
 //Register Company
 export const register = ({
   name,
@@ -78,6 +81,7 @@ export const register = ({
       type: REGISTER_SUCCESS,
       payload: res.data
     });
+    dispatch(loadUser());
   } catch (error) {
     const errors = error.response.data.errors;
     if (errors) {
@@ -120,6 +124,7 @@ export const registers = ({
       type: REGISTER_SUCCESS,
       payload: res.data
     });
+    dispatch(loadUser());
   } catch (error) {
     const errors = error.response.data.errors;
     if (errors) {
@@ -130,7 +135,7 @@ export const registers = ({
     });
   }
 };
-//Login Students
+//Login Students and company
 export const login = (email, password) => async dispatch => {
   const config = {
     headers: {
@@ -142,18 +147,51 @@ export const login = (email, password) => async dispatch => {
     password
   });
   try {
-    const res = await axios.post("/api/students", body, config);
+    const res = await axios.post("/api/auth", body, config);
     dispatch({
-      type: REGISTER_SUCCESS,
+      type: LOGIN_SUCCESS,
       payload: res.data
     });
+    dispatch(loadUser());
   } catch (error) {
     const errors = error.response.data.errors;
     if (errors) {
       errors.forEach(error => dispatch(setAlert(error.msg, "danger")));
     }
     dispatch({
-      type: REGISTER_FAIL
+      type: LOGIN_FAIL
     });
   }
+};
+//Login Companyy
+// export const loginc = (email, password) => async dispatch => {
+//   const config = {
+//     headers: {
+//       "Content-Type": "application/json"
+//     }
+//   };
+//   const body = JSON.stringify({
+//     email,
+//     password
+//   });
+//   try {
+//     const res = await axios.post("/api/authc", body, config);
+//     dispatch({
+//       type: LOGIN_SUCCESS,
+//       payload: res.data
+//     });
+//     dispatch(loadUser());
+//   } catch (error) {
+//     const errors = error.response.data.errors;
+//     if (errors) {
+//       errors.forEach(error => dispatch(setAlert(error.msg, "danger")));
+//     }
+//     dispatch({
+//       type: LOGIN_FAIL
+//     });
+//   }
+// };
+export const logout = () => dispatch => {
+  // dispatch({ type: CLEAR_PROFILE });
+  dispatch({ type: LOGOUT });
 };

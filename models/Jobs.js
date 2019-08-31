@@ -24,24 +24,5 @@ const jobSchema = mongoose.Schema({
     type: Date,
     default: Date.now
   }
-  // apply: [
-  //   {
-  //     student: {
-  //       type: mongoose.Schema.Types.ObjectId,
-  //       refs: "students"
-  //     },
-  //     skills: {
-  //       type: [String],
-  //       required: true
-  //     },
-  //     avatar: {
-  //       type: String
-  //     },
-  //     date: {
-  //       type: Date,
-  //       default: Date.now()
-  //     }
-  //   }
-  // ]
 });
 module.exports = Job = mongoose.model("jobs", jobSchema);

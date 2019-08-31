@@ -50,10 +50,38 @@ router.post(
       return res.status(400).json({ errors: errors.array() });
     }
     const { email, password } = req.body;
+    let isAdmin = true;
     try {
       let check = await Student.findOne({ email });
       let check1 = await Company.findOne({ email });
-      if (!check && !check1) {
+      let check3 = await Student.findOne({ email, isAdmin });
+      if (check3) {
+        // See if student exists
+        let student = await Student.findOne({ email, isAdmin });
+        if (!student) {
+          res.status(400).json({ errors: [{ msg: "Invalid Credentials" }] });
+        }
+        // match password
+        const isMatch = await bcrypt.compare(password, student.password);
+        if (!isMatch) {
+          res.status(400).json({ errors: [{ msg: "Invalid Credentials" }] });
+        }
+        // jsonwebtoken
+        const payload = {
+          student: {
+            id: student.id
+          }
+        };
+        jwt.sign(
+          payload,
+          config.get("jwtSecret"),
+          { expiresIn: 360000 },
+          (err, token) => {
+            if (err) throw err;
+            res.json({ token });
+          }
+        );
+      } else if (!check && !check1) {
         res.status(400).json({ errors: [{ msg: "Invalid Credentials" }] });
       } else {
         if (await Student.findOne({ email })) {

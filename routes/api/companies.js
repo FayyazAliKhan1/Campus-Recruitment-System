@@ -140,7 +140,7 @@ router.post(
     }
     const { job_name, eligible_c, salary, description } = req.body;
     try {
-      let job = await Job.findOne({ company: req.company.id });
+      let job = await Job.findOne({ company: req.company.id, job_name });
 
       if (job) {
         return res
@@ -162,21 +162,17 @@ router.post(
     }
   }
 );
-// route Delete api/companies/post_job/:comp_id/:job_id
-// desc Route for company to delete it's job by id
+
+// route GET api/companies/students
+// desc GET all registered students data
 // access private
-router.delete("/post_job/:comp_id/:job_id", auth, async (req, res) => {
+router.get("/students", auth, async (req, res) => {
   try {
-    const company = await Company.findById(req.params.comp_id);
-    const removeIndex = company.post_job
-      .map(job => job.id)
-      .indexOf(req.params.job_id);
-    company.post_job.splice(removeIndex, 1);
-    await company.save();
-    res.json(company);
+    const student = await Student.find();
+    res.json(student);
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Server Error");
+    res.status(500).send("Server error");
   }
 });
 // route GET api/companies/app_students/:job_id

@@ -4,23 +4,22 @@ import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import Navbar from "./components/layout/Navbar";
 import Landing from "./components/layout/Landing";
 import Alert from "./components/layout/Alert";
+import Dashboard from "./components/dashboard/Dashboard";
+import PrivateRoute from "./components/routing/PrivateRoute";
 import Login from "./components/auth/Login";
 import Register from "./components/auth/Register";
 import Registers from "./components/auth/Registers";
 import { Provider } from "react-redux";
 import store from "./store";
 import setAuthToken from "./utils/setAuthToken";
-import { loadUsers, loadUsera, loadUserc } from "./actions/auth";
+import { loadUser } from "./actions/auth";
 
 if (localStorage.token) {
   setAuthToken(localStorage.token);
 }
 const App = () => {
   useEffect(() => {
-    //work as a component did mount when using [] as a second param
-    store.dispatch(loadUsera);
-    store.dispatch(loadUserc);
-    store.dispatch(loadUsers);
+    store.dispatch(loadUser);
   }, []);
   return (
     <Provider store={store}>
@@ -34,6 +33,12 @@ const App = () => {
               <Route exact path="/register" component={Register} />
               <Route exact path="/registers" component={Registers} />
               <Route exact path="/login" component={Login} />
+              <PrivateRoute
+                Route
+                exact
+                path="/dashboard"
+                component={Dashboard}
+              />
             </Switch>
           </section>
         </Fragment>

@@ -65,22 +65,20 @@ const profileSchema = new mongoose.Schema({
       }
     }
   ],
-  image: {
-    data: Buffer,
-    ContentType: String
-  },
-  criteria: {
-    type: String
-  },
-  lastDate: {
-    type: Date
-  },
-  interviewDate: {
-    type: Date
-  },
-  bond: {
-    type: Number
-  },
+  // image: {
+  //   data: Buffer,
+  //   ContentType: String
+  // },
+  // criteria: {
+  //   type: String
+  // },
+  // lastDate: {
+  //   type: Date
+  // },
+  // interviewDate: {
+  //   type: Date
+  // },
+  // bond: Number
   education: [
     {
       school: {

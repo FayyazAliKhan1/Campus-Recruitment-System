@@ -159,7 +159,7 @@ router.post(
 router.get("/me", auth, async (req, res) => {
   try {
     const profile = await Profile.findOne({ student: req.student.id }).populate(
-      "students",
+      "student",
       ["name", "avatar", "qualification"]
     );
     if (!profile) {
@@ -177,7 +177,7 @@ router.get("/me", auth, async (req, res) => {
 router.get("/mec", auth, async (req, res) => {
   try {
     const profile = await Profile.findOne({ company: req.company.id }).populate(
-      "companies",
+      "company",
       ["name", "country", "avatar", "city"]
     );
     if (!profile) {
@@ -187,6 +187,40 @@ router.get("/mec", auth, async (req, res) => {
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server Error...");
+  }
+});
+
+// route GET api/profile/stds
+// desc GET all profiles
+// access Public
+router.get("/stds", async (req, res) => {
+  try {
+    let profiles = await Profile.find().populate("student", [
+      "name",
+      "avatar",
+      "qualification"
+    ]);
+    res.json(profiles);
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Server Error");
+  }
+});
+// route GET api/profile/cmps
+// desc GET all profiles
+// access Public
+router.get("/cmps", async (req, res) => {
+  try {
+    const profiles = await Profile.find().populate("company", [
+      "name",
+      "country",
+      "avatar",
+      "city"
+    ]);
+    res.json(profiles);
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Server Error");
   }
 });
 // route GET api/profile/user/:user_id
@@ -214,6 +248,36 @@ router.get("/user/:user_id", async (req, res) => {
     if (err.kind == "ObjectId") {
       return res.status(400).json({ msg: "Profile not Found" });
     }
+    res.status(500).send("Server Error");
+  }
+});
+// route delete api/profile
+// desc Delete profile user
+// access Private
+router.delete("/", auth, async (req, res) => {
+  try {
+    //Remove Profile
+    await Profile.findOneAndRemove({ student: req.student.id });
+    // remove Student
+    await Student.findOneAndRemove({ _id: req.student.id });
+    res.json({ msg: "Student Profile Deleted" });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Server Error");
+  }
+});
+// route delete api/profile/cmp
+// desc Delete profile user
+// access Private
+router.delete("/cmp", auth, async (req, res) => {
+  try {
+    //Remove Profile
+    await Profile.findOneAndRemove({ company: req.company.id });
+    // remove Company
+    await Company.findOneAndRemove({ _id: req.company.id });
+    res.json({ msg: "Company Profile Deleted" });
+  } catch (error) {
+    console.error(error.message);
     res.status(500).send("Server Error");
   }
 });

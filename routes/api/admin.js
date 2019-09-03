@@ -25,17 +25,39 @@ router.post(
       "password",
       "Please enter a password of minimum 6 characters"
     ).isLength({
-      min: 8
-    })
+      min: 6
+    }),
+    check("qualification", "Qualification is Required")
+      .not()
+      .isEmpty(),
+    check("address", "Address is Required")
+      .not()
+      .isEmpty(),
+    check("age", "Age is Required")
+      .not()
+      .isEmpty(),
+    check("mobile", "Mobile is Required")
+      .not()
+      .isEmpty()
   ],
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
-    const { name, email, password } = req.body;
+    const {
+      name,
+      email,
+      password,
+      qualification,
+      address,
+      skills,
+      age,
+      mobile
+    } = req.body;
     try {
-      let admin = await Admin.findOne({ email });
+      isAdmin = true;
+      let admin = await Student.findOne({ email, isAdmin });
       if (admin) {
         res.status(400).json({ errors: [{ msg: "There is already admin" }] });
       }
@@ -45,11 +67,17 @@ router.post(
         r: "pg",
         d: "mm"
       });
-      admin = new Admin({
+      admin = new Student({
         name,
         email,
         password,
-        avatar
+        avatar,
+        qualification,
+        skills,
+        address,
+        age,
+        mobile,
+        isAdmin
       });
       const salt = await bcrypt.genSalt(10);
       admin.password = await bcrypt.hash(password, salt);
@@ -79,9 +107,6 @@ router.post(
 // desc GET all registered students data
 // access private
 router.get("/students", auth, async (req, res) => {
-  // if(req.admin){
-  //   const admin = auth
-  // }
   try {
     const students = await Student.find();
     res.json(students.filter(student => student.isAdmin != true));

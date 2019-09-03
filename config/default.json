@@ -1,4 +1,6 @@
 {
   "mongoURI": "mongodb+srv://fayyaz:fayyaz123@campusp-z2of6.mongodb.net/test?retryWrites=true&w=majority",
-  "jwtSecret": "masterBlaster"
+  "jwtSecret": "masterBlaster",
+  "githubClientId": "e1cce92f0481b5856696",
+  "githubSecret": "f77872bed41ac2b8df1c8f02cabdcd2d4385b81f"
 }

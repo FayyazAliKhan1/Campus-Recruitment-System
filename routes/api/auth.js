@@ -57,19 +57,19 @@ router.post(
       let check3 = await Student.findOne({ email, isAdmin });
       if (check3) {
         // See if student exists
-        let student = await Student.findOne({ email, isAdmin });
-        if (!student) {
+        let admin = await Student.findOne({ email, isAdmin });
+        if (!admin) {
           res.status(400).json({ errors: [{ msg: "Invalid Credentials" }] });
         }
         // match password
-        const isMatch = await bcrypt.compare(password, student.password);
+        const isMatch = await bcrypt.compare(password, admin.password);
         if (!isMatch) {
           res.status(400).json({ errors: [{ msg: "Invalid Credentials" }] });
         }
         // jsonwebtoken
         const payload = {
-          student: {
-            id: student.id
+          admin: {
+            id: admin.id
           }
         };
         jwt.sign(
@@ -142,37 +142,6 @@ router.post(
       console.error(error.message);
       res.status(500).send("Server Error");
     }
-
-    // try {
-    // //   // See if student exists
-    // //   let student = await Student.findOne({ email });
-    // //   if (!student) {
-    // //     res.status(400).json({ errors: [{ msg: "Invalid Credentials" }] });
-    // //   }
-    // //   // match password
-    // //   const isMatch = await bcrypt.compare(password, student.password);
-    // //   if (!isMatch) {
-    // //     res.status(400).json({ errors: [{ msg: "Invalid Credentials" }] });
-    // //   }
-    // //   // jsonwebtoken
-    // //   const payload = {
-    // //     student: {
-    // //       id: student.id
-    // //     }
-    // //   };
-    // //   jwt.sign(
-    // //     payload,
-    // //     config.get("jwtSecret"),
-    // //     { expiresIn: 360000 },
-    // //     (err, token) => {
-    // //       if (err) throw err;
-    // //       res.json({ token });
-    // //     }
-    // //   );
-    // // } catch (error) {
-    // //   console.error(error.message);
-    // //   res.status(500).send("Server Error");
-    // // }
   }
 );
 module.exports = router;

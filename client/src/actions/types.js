@@ -9,3 +9,6 @@ export const USER_LOADED = "USER_LOADED";
 export const AUTH_ERROR = "AUTH_ERROR";
 export const GET_JOBS = "GET_JOBS";
 export const JOB_ERROR = "JOB_ERROR";
+export const GET_PROFILE = "GET_PROFILE";
+export const PROFILE_ERROR = "PROFILE_ERROR";
+export const CLEAR_PROFILE = "CLEAR_PROFILE";

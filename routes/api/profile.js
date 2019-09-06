@@ -165,32 +165,39 @@ router.get("/me", auth, async (req, res) => {
     );
     if (!profile) {
       return res.status(400).json({ msg: "There is no Profile for the User" });
+    } else if (profile) {
+      return res.json(profile);
     }
-    res.json(profile);
-  } catch (err) {
-    console.error(err.message);
+    const profile1 = await Profile.findOne({
+      company: req.company.id
+    }).populate("company", ["name", "avatar", "country", "city"]);
+    if (!profile1) {
+      return res.status(400).json({ msg: "There is no Profile for the User" });
+    }
+    res.json(profile1);
+  } catch (error) {
+    console.error(error.message);
     res.status(500).send("Server Error...");
   }
 });
 // route GET api/profile/mec
 // desc Get Current Company profile
 // access private
-router.get("/mec", auth, async (req, res) => {
-  try {
-    const profile = await Profile.findOne({ company: req.company.id }).populate(
-      "company",
-      ["name", "country", "avatar", "city"]
-    );
-    if (!profile) {
-      return res.status(400).json({ msg: "There is no Profile for the User" });
-    }
-    res.json(profile);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send("Server Error...");
-  }
-});
-
+// router.get("/mec", auth, async (req, res) => {
+//   try {
+//     const profile = await Profile.findOne({ company: req.company.id }).populate(
+//       "company",
+//       ["name", "country", "avatar", "city"]
+//     );
+//     if (!profile) {
+//       return res.status(400).json({ msg: "There is no Profile for the User" });
+//     }
+//     res.json(profile);
+//   } catch (err) {
+//     console.error(err.message);
+//     res.status(500).send("Server Error...");
+//   }
+// });
 // route GET api/profile/stds
 // desc GET all profiles
 // access Public
@@ -232,13 +239,13 @@ router.get("/user/:user_id", async (req, res) => {
     let profile, profile1;
     profile = await Profile.findOne({
       student: req.params.user_id
-    }).populate("students", ["name", "avatar"]);
+    }).populate("student", ["name", "avatar", "qualification"]);
     if (profile) {
       res.json(profile);
     } else if (!profile) {
       profile1 = await Profile.findOne({
         company: req.params.user_id
-      }).populate("companies", ["name", "avatar"]);
+      }).populate("company", ["name", "avatar", "country", "city"]);
       if (!profile1) {
         return res.status(400).json({ msg: "Profile not found" });
       }

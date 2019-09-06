@@ -18,21 +18,18 @@ router.get("/", auth, async (req, res) => {
         "-password"
       );
       res.json(student);
-    } else {
+    } else if (decoded.company) {
       const company = await Company.findById(req.company.id).select(
         "-password"
       );
       res.json(company);
+    } else {
+      const admin = await Student.findById(req.admin.id).select("-password");
+      res.json(admin);
     }
   } catch (error) {
     res.status(500).send("Server Error");
   }
-  // try {
-  //   const student = await Student.findById(req.student.id).select("-password");
-  //   res.json(student);
-  // } catch (error) {
-  //   res.status(500).send("Server Error");
-  // }
 });
 
 // route POST api/auth

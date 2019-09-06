@@ -5,6 +5,10 @@ import Navbar from "./components/layout/Navbar";
 import Landing from "./components/layout/Landing";
 import Alert from "./components/layout/Alert";
 import Dashboard from "./components/dashboard/Dashboard";
+import CreateProfileS from "./components/profile-forms/CreateProfileS";
+import CreateProfileC from "./components/profile-forms/CreateProfileC";
+import EditProfile from "./components/profile-forms/EditProfile";
+import EditProfileC from "./components/profile-forms/EditProfileC";
 import PrivateRoute from "./components/routing/PrivateRoute";
 import Login from "./components/auth/Login";
 import Register from "./components/auth/Register";
@@ -38,6 +42,30 @@ const App = () => {
                 exact
                 path="/dashboard"
                 component={Dashboard}
+              />
+              <PrivateRoute
+                Route
+                exact
+                path="/create-profiles"
+                component={CreateProfileS}
+              />
+              <PrivateRoute
+                Route
+                exact
+                path="/create-profilec"
+                component={CreateProfileC}
+              />
+              <PrivateRoute
+                Route
+                exact
+                path="/edit-profile"
+                component={EditProfile}
+              />
+              <PrivateRoute
+                Route
+                exact
+                path="/edit-profile"
+                component={EditProfileC}
               />
             </Switch>
           </section>

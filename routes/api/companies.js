@@ -4,6 +4,7 @@ const { check, validationResult } = require("express-validator");
 const Company = require("../../models/Company");
 const auth = require("../../middleware/auth");
 const Student = require("../../models/Student");
+const Applied = require("../../models/Applied");
 const Job = require("../../models/Jobs");
 const gravatar = require("gravatar");
 const bcrypt = require("bcrypt");
@@ -175,17 +176,20 @@ router.get("/students", auth, async (req, res) => {
     res.status(500).send("Server error");
   }
 });
-// route GET api/companies/app_students/:job_id
+// route GET api/companies/applieds
 // desc View applied students
 // access private
 
-// router.get('/app_students/:job_id', auth, (req, res) => {
-//   try {
-//     const job = await Job.findById(req.student.id)
-//     const student = await Student.find()
-//   } catch (error) {
-//     console.error(error.message)
-//     res.status(500).send('Server error')
-//   }
-// })
+router.get("/applieds", auth, async (req, res) => {
+  try {
+    const std_app = await Applied.find().populate("student", [
+      "name",
+      "avatar"
+    ]);
+    res.json(std_app);
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Server error");
+  }
+});
 module.exports = router;

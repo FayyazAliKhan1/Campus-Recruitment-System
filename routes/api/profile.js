@@ -7,6 +7,7 @@ const Profile = require("../../models/Profile");
 const Student = require("../../models/Student");
 const Company = require("../../models/Company");
 const { check, validationResult } = require("express-validator");
+const jwt = require("jsonwebtoken");
 // route POST api/profile/student
 // desc create and update a student profile
 // access private
@@ -158,46 +159,35 @@ router.post(
 // access private
 // using token
 router.get("/me", auth, async (req, res) => {
+  const token = req.header("x-auth-token");
   try {
-    const profile = await Profile.findOne({ student: req.student.id }).populate(
-      "student",
-      ["name", "avatar", "qualification"]
-    );
-    if (!profile) {
-      return res.status(400).json({ msg: "There is no Profile for the User" });
-    } else if (profile) {
-      return res.json(profile);
+    const decoded = jwt.verify(token, config.get("jwtSecret"));
+    if (decoded.student) {
+      const profile = await Profile.findOne({
+        student: req.student.id
+      }).populate("student", ["name", "avatar", "qualification"]);
+      if (!profile) {
+        return res
+          .status(400)
+          .json({ msg: "There is no Profile for the User" });
+      }
+      res.json(profile);
+    } else if (decoded.company) {
+      const profile1 = await Profile.findOne({
+        company: req.company.id
+      }).populate("company", ["name", "avatar", "country", "city"]);
+      if (!profile1) {
+        return res
+          .status(400)
+          .json({ msg: "There is no Profile for the User" });
+      }
+      res.json(profile1);
     }
-    const profile1 = await Profile.findOne({
-      company: req.company.id
-    }).populate("company", ["name", "avatar", "country", "city"]);
-    if (!profile1) {
-      return res.status(400).json({ msg: "There is no Profile for the User" });
-    }
-    res.json(profile1);
   } catch (error) {
     console.error(error.message);
     res.status(500).send("Server Error...");
   }
 });
-// route GET api/profile/mec
-// desc Get Current Company profile
-// access private
-// router.get("/mec", auth, async (req, res) => {
-//   try {
-//     const profile = await Profile.findOne({ company: req.company.id }).populate(
-//       "company",
-//       ["name", "country", "avatar", "city"]
-//     );
-//     if (!profile) {
-//       return res.status(400).json({ msg: "There is no Profile for the User" });
-//     }
-//     res.json(profile);
-//   } catch (err) {
-//     console.error(err.message);
-//     res.status(500).send("Server Error...");
-//   }
-// });
 // route GET api/profile/stds
 // desc GET all profiles
 // access Public

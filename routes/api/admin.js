@@ -1,115 +1,19 @@
 const express = require("express");
 const router = express.Router();
-const { check, validationResult } = require("express-validator");
-const bcrypt = require("bcrypt");
-const gravatar = require("gravatar");
-const jwt = require("jsonwebtoken");
 const Student = require("../../models/Student");
 const Company = require("../../models/Company");
 const Applied = require("../../models/Applied");
 const Job = require("../../models/Jobs");
 const auth = require("../../middleware/auth");
-const config = require("config");
-// route POST api/admin
-// desc Test route
-// access public
+const admin = require("../../middleware/admin");
 
-router.post(
-  "/",
-  [
-    check("name", "Name is Required")
-      .not()
-      .isEmpty(),
-    check("email", "Please include a valid email").isEmail(),
-    check(
-      "password",
-      "Please enter a password of minimum 6 characters"
-    ).isLength({
-      min: 6
-    }),
-    check("qualification", "Qualification is Required")
-      .not()
-      .isEmpty(),
-    check("address", "Address is Required")
-      .not()
-      .isEmpty(),
-    check("age", "Age is Required")
-      .not()
-      .isEmpty(),
-    check("mobile", "Mobile is Required")
-      .not()
-      .isEmpty()
-  ],
-  async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-    const {
-      name,
-      email,
-      password,
-      qualification,
-      address,
-      skills,
-      age,
-      mobile
-    } = req.body;
-    try {
-      isAdmin = true;
-      let admin = await Student.findOne({ email, isAdmin });
-      if (admin) {
-        res.status(400).json({ errors: [{ msg: "There is already admin" }] });
-      }
-      // Get Admin gravtar
-      const avatar = gravatar.url(email, {
-        s: "200",
-        r: "pg",
-        d: "mm"
-      });
-      admin = new Student({
-        name,
-        email,
-        password,
-        avatar,
-        qualification,
-        skills,
-        address,
-        age,
-        mobile,
-        isAdmin
-      });
-      const salt = await bcrypt.genSalt(10);
-      admin.password = await bcrypt.hash(password, salt);
-      await admin.save();
-      //return token
-      const payload = {
-        admin: {
-          id: admin.id
-        }
-      };
-      jwt.sign(
-        payload,
-        config.get("jwtSecret"),
-        { expiresIn: 360000 },
-        (err, token) => {
-          if (err) throw err;
-          res.json({ token });
-        }
-      );
-    } catch (error) {
-      console.error(error.message);
-      res.status(500).send("Server error");
-    }
-  }
-);
 // route GET api/admin/students
 // desc GET all registered students data
 // access private
-router.get("/students", auth, async (req, res) => {
+router.get("/students", [auth, admin], async (req, res) => {
   try {
     const students = await Student.find();
-    res.json(students.filter(student => student.isAdmin != true));
+    res.json(students.filter(student => student.isAdmin !== true));
   } catch (error) {
     console.error(error.message);
     res.status(500).send("Server error");
@@ -118,7 +22,7 @@ router.get("/students", auth, async (req, res) => {
 // route GET api/admin/companies
 // desc get all companies
 // access private
-router.get("/companies", auth, async (req, res) => {
+router.get("/companies", [auth, admin], async (req, res) => {
   try {
     const company = await Company.find();
     res.json(company);
@@ -126,10 +30,26 @@ router.get("/companies", auth, async (req, res) => {
     res.status(500).send("Server Error");
   }
 });
+// route GET api/admin/applieds
+// desc get all applieds
+// access private
+router.get("/applieds", [auth, admin], async (req, res) => {
+  try {
+    const std_app = await Applied.find().populate("student", [
+      "name",
+      "avatar"
+    ]);
+    res.json(std_app);
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Server error");
+  }
+});
+
 // route Delete api/admin/std/:std_id
 // desc delete student
 // access private
-router.delete("/std/:std_id", auth, async (req, res) => {
+router.delete("/std/:std_id", [auth, admin], async (req, res) => {
   try {
     await Student.findOneAndRemove({ _id: req.params.std_id });
     await Applied.findByIdAndDelete(req.params.id);
@@ -142,7 +62,7 @@ router.delete("/std/:std_id", auth, async (req, res) => {
 // route Delete api/admin/cmp/:cmp_id
 // desc delete company
 // access private
-router.delete("/cmp/:cmp_id", auth, async (req, res) => {
+router.delete("/cmp/:cmp_id", [auth, admin], async (req, res) => {
   try {
     await Company.findOneAndRemove({ _id: req.params.cmp_id });
     await Job.findByIdAndDelete(req.params.cmp_id);
@@ -155,7 +75,7 @@ router.delete("/cmp/:cmp_id", auth, async (req, res) => {
 // route Delete api/admin/jobs/:job_id
 // desc delete job
 // access private
-router.delete("/jobs/:job_id", auth, async (req, res) => {
+router.delete("/jobs/:job_id", [auth, admin], async (req, res) => {
   try {
     await Job.findOneAndRemove({ _id: req.params.job_id });
 
@@ -165,4 +85,17 @@ router.delete("/jobs/:job_id", auth, async (req, res) => {
     res.status(500).send("Server error");
   }
 });
+// route Delete api/admin/:app_std
+// desc delete job
+// access private
+// router.delete("/:app_std", [auth, admin], async (req, res) => {
+//   try {
+//     await Applied.findOneAndRemove({ _id: req.params.app_std });
+
+//     res.json({ msg: "Apply Student Deleted" });
+//   } catch (error) {
+//     console.error(error.message);
+//     res.status(500).send("Server error");
+//   }
+// });
 module.exports = router;

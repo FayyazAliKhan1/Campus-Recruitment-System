@@ -15,8 +15,6 @@ module.exports = function(req, res, next) {
       req.student = decoded.student;
     } else if (decoded.company) {
       req.company = decoded.company;
-    } else {
-      req.admin = decoded.admin;
     }
 
     next();

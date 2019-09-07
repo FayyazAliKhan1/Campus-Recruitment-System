@@ -87,7 +87,8 @@ router.post(
       // Return jsonwebtoken
       const payload = {
         student: {
-          id: student.id
+          id: student.id,
+          isAdmin: student.isAdmin
         }
       };
       jwt.sign(
@@ -99,6 +100,9 @@ router.post(
           res.json({ token });
         }
       );
+      // const token = student.generateAuthToken();
+      // res.header("x-auth-token", token);
+      // res.json({ token });
     } catch (error) {
       console.error(error.message);
       res.status(500).send("Server Error");

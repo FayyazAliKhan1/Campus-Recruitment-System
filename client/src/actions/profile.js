@@ -3,7 +3,10 @@ import {
   GET_PROFILE,
   PROFILE_ERROR,
   UPDATE_PROFILE,
-  ACCOUNT_DELETED
+  ACCOUNT_DELETED,
+  CLEAR_PROFILE,
+  GET_PROFILES,
+  GET_REPOS
 } from "./types";
 import { setAlert } from "./alert";
 //Get current user profile
@@ -191,4 +194,66 @@ export const deleteAccount = () => async dispatch => {
         }
       });
     }
+};
+//Get Student profile
+export const getProfiles = () => async dispatch => {
+  dispatch({ type: CLEAR_PROFILE });
+  try {
+    const res = await axios.get("/api/profile/stds");
+    dispatch({
+      type: GET_PROFILES,
+      payload: res.data
+    });
+  } catch (error) {
+    dispatch({
+      type: PROFILE_ERROR,
+      payload: { msg: error.response.statusText, status: error.response.status }
+    });
+  }
+};
+//Get Company profile
+export const getProfilesC = () => async dispatch => {
+  dispatch({ type: CLEAR_PROFILE });
+  try {
+    const res = await axios.get("/api/profile/cmps");
+    dispatch({
+      type: GET_PROFILES,
+      payload: res.data
+    });
+  } catch (error) {
+    dispatch({
+      type: PROFILE_ERROR,
+      payload: { msg: error.response.statusText, status: error.response.status }
+    });
+  }
+};
+//Get profile by id
+export const getProfileById = id => async dispatch => {
+  try {
+    const res = await axios.get(`/api/profile/user/${id}`);
+    dispatch({
+      type: GET_PROFILE,
+      payload: res.data
+    });
+  } catch (error) {
+    dispatch({
+      type: PROFILE_ERROR,
+      payload: { msg: error.response.statusText, status: error.response.status }
+    });
+  }
+};
+//Get Git hub repos
+export const getGithubRepos = name => async dispatch => {
+  try {
+    const res = await axios.get(`/api/profile/github/${name}`);
+    dispatch({
+      type: GET_REPOS,
+      payload: res.data
+    });
+  } catch (error) {
+    dispatch({
+      type: PROFILE_ERROR,
+      payload: { msg: error.response.statusText, status: error.response.status }
+    });
+  }
 };

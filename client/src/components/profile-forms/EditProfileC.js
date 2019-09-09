@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import { Link, withRouter } from "react-router-dom";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
@@ -6,7 +6,8 @@ import { createProfileC, getCurrentProfile } from "../../actions/profile";
 const EditProfileC = ({
   profile: { profile, loading },
   createProfileC,
-  getCurrentProfile
+  getCurrentProfile,
+  history
 }) => {
   const [formData, setFormData] = useState({
     status: "",

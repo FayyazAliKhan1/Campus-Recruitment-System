@@ -188,6 +188,31 @@ router.get("/me", auth, async (req, res) => {
     res.status(500).send("Server Error...");
   }
 });
+// route delete api/profile
+// desc Delete profile user
+// access Private
+router.delete("/", auth, async (req, res) => {
+  const token = req.header("x-auth-token");
+  try {
+    const decoded = jwt.verify(token, config.get("jwtSecret"));
+    if (decoded.student) {
+      //Remove Profile
+      await Profile.findOneAndRemove({ student: req.student.id });
+      // remove Student
+      await Student.findOneAndRemove({ _id: req.student.id });
+      res.json({ msg: "Student Profile Deleted" });
+    } else if (decoded.company) {
+      //Remove Profile
+      await Profile.findOneAndRemove({ company: req.company.id });
+      // remove Company
+      await Company.findOneAndRemove({ _id: req.company.id });
+      res.json({ msg: "Company Profile Deleted" });
+    }
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Server Error");
+  }
+});
 // route GET api/profile/stds
 // desc GET all profiles
 // access Public
@@ -249,21 +274,7 @@ router.get("/user/:user_id", async (req, res) => {
     res.status(500).send("Server Error");
   }
 });
-// route delete api/profile
-// desc Delete profile user
-// access Private
-router.delete("/", auth, async (req, res) => {
-  try {
-    //Remove Profile
-    await Profile.findOneAndRemove({ student: req.student.id });
-    // remove Student
-    await Student.findOneAndRemove({ _id: req.student.id });
-    res.json({ msg: "Student Profile Deleted" });
-  } catch (error) {
-    console.error(error.message);
-    res.status(500).send("Server Error");
-  }
-});
+
 // route delete api/profile/cmp
 // desc Delete profile user
 // access Private

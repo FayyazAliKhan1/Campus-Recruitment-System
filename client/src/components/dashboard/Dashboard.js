@@ -27,7 +27,9 @@ const Dashboard = ({
       {profile !== null ? (
         <Fragment>
           <DashboardAction />
-          {user.age === undefined ? null : (
+          {user.age === undefined ? (
+            ""
+          ) : (
             <Fragment>
               <Experience experience={profile.experience} />
               <Education education={profile.education} />

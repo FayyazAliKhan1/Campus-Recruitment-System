@@ -100,9 +100,6 @@ router.post(
           res.json({ token });
         }
       );
-      // const token = student.generateAuthToken();
-      // res.header("x-auth-token", token);
-      // res.json({ token });
     } catch (error) {
       console.error(error.message);
       res.status(500).send("Server Error");
@@ -163,16 +160,16 @@ router.post(
     }
   }
 );
-// route POST api/students/companies
-// desc view all companies
+// route GET api/students
+// desc GET all registered students data
 // access private
-router.get("/companies", auth, async (req, res) => {
+router.get("/", async (req, res) => {
   try {
-    const comp = await Company.find();
-    res.json(comp);
+    const students = await Student.find().select("-password");
+    res.json(students.filter(student => student.isAdmin !== true));
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Server Error");
+    res.status(500).send("Server error");
   }
 });
 

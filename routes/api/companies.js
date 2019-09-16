@@ -3,7 +3,6 @@ const router = express.Router();
 const { check, validationResult } = require("express-validator");
 const Company = require("../../models/Company");
 const auth = require("../../middleware/auth");
-const Student = require("../../models/Student");
 const Applied = require("../../models/Applied");
 const Job = require("../../models/Jobs");
 const gravatar = require("gravatar");
@@ -163,17 +162,16 @@ router.post(
     }
   }
 );
-
-// route GET api/companies/students
-// desc GET all registered students data
+// route POST api/companies
+// desc view all companies
 // access private
-router.get("/students", auth, async (req, res) => {
+router.get("/", async (req, res) => {
   try {
-    const student = await Student.find();
-    res.json(student);
+    const comp = await Company.find().select("-password");
+    res.json(comp);
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Server error");
+    res.status(500).send("Server Error");
   }
 });
 // route GET api/companies/applieds

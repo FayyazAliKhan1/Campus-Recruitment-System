@@ -9,6 +9,11 @@ const DashboardAction = ({ user }) => (
         <Link to="/edit-profilec" className="btn btn-light">
           <i className="fas fa-user-circle text-primary" /> Edit Profile
         </Link>
+        <Link to="/post-job" className="btn btn-light">
+          {" "}
+          <i className="fas fa-job text-primary" />
+          Post Job
+        </Link>
       </div>
     ) : (
       <div className="dash-buttons">

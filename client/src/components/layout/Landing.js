@@ -10,17 +10,15 @@ const Landing = () => {
             Here Company Posts jobs and Students apply for jobs
           </p>
           <div className="buttons">
-            <Link to="/login" className="btn btn-primary">
-              Admin
+            <Link to="/registers" className="btn btn-primary">
+              Sign Up for Students
+            </Link>
+            <Link to="/register" className="btn btn-primary">
+              Sign Up for Company
             </Link>
             <Link to="/login" className="btn btn-light">
-              Company
+              Login
             </Link>
-            <Link to="/login" className="btn btn-light">
-              Student
-            </Link>
-            {/* <a href="register.html" className="btn btn-primary">Sign Up</a>
-            <a href="login.html" className="btn btn-light">Login</a> */}
           </div>
         </div>
       </div>

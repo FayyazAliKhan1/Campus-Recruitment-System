@@ -1,27 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const auth = require("../../middleware/auth");
-const Company = require("../../models/Company");
+const Applied = require("../../models/Applied");
 const Job = require("../../models/Jobs");
 const { check, validationResult } = require("express-validator");
-//route GET api/jobs/vacancy
-//desc GET current job posted by company
-// access private
-// router.get("/vacancy", auth, async (req, res) => {
-//   try {
-//     const job = await Job.findOne({ company: req.company.id }).populate(
-//       "companies",
-//       ["name", "avatar"]
-//     );
-//     if (!job) {
-//       res.status(400).json({ msg: "There is no job posted by this company" });
-//     }
-//     res.json(job);
-//   } catch (error) {
-//     console.error(error.message);
-//     res.status(500).send("Server error");
-//   }
-// });
 
 // route GET api/jobs/comp1
 // desc get all Jobs by of 1 company
@@ -29,8 +11,8 @@ const { check, validationResult } = require("express-validator");
 router.get("/comp1", auth, async (req, res) => {
   try {
     const jobs = await Job.find({ company: req.company.id }).populate(
-      "companies",
-      ["name", "avatar"]
+      "company",
+      ["name", "website"]
     );
     if (!jobs) {
       return res
@@ -74,12 +56,6 @@ router.put(
       return res.status(400).json({ errors: errors.array() });
     }
     const { job_name, eligible_c, salary, description } = req.body;
-    // const jobFields = {};
-    // jobFields.company = req.company.id;
-    // if (job_name) jobFields.job_name = job_name;
-    // if (eligible_c) jobFields.eligible_c = eligible_c;
-    // if (salary) jobFields.salary = salary;
-    // if (description) jobFields.description = description;
     const newJob = {
       job_name,
       eligible_c,
@@ -107,8 +83,7 @@ router.put(
 // access public
 router.get("/", async (req, res) => {
   try {
-    const jobs = await Job.find();
-    //.populate("companies", ["name", "avatar"]);
+    const jobs = await Job.find().populate("company", ["name", "website"]);
     res.json(jobs);
   } catch (error) {
     console.error(error.message);
@@ -122,8 +97,8 @@ router.get("/", async (req, res) => {
 router.get("/comp/:comp_id", async (req, res) => {
   try {
     const job = await Job.findOne({ company: req.params.comp_id }).populate(
-      "companies",
-      ["name", "avatar"]
+      "company",
+      ["name", "website"]
     );
     if (!job) {
       return res
@@ -140,11 +115,12 @@ router.get("/comp/:comp_id", async (req, res) => {
   }
 });
 // route Delete api/jobs/:job_id
-// desc Route for company to delete it's job by id
+// desc delete job by id
 // access private
 router.delete("/:job_id", auth, async (req, res) => {
   try {
     await Job.findByIdAndDelete(req.params.job_id);
+    await Applied.findByIdAndDelete(req.params.job_id);
     res.json({ msg: "Job deleted" });
   } catch (error) {
     console.error(error.message);

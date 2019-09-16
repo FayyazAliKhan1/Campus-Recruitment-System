@@ -165,7 +165,7 @@ router.get("/me", auth, async (req, res) => {
     if (decoded.student) {
       const profile = await Profile.findOne({
         student: req.student.id
-      }).populate("student", ["name", "avatar", "qualification"]);
+      }).populate("student", ["name", "avatar", "qualification", "mobile"]);
       if (!profile) {
         return res
           .status(400)
@@ -175,7 +175,7 @@ router.get("/me", auth, async (req, res) => {
     } else if (decoded.company) {
       const profile1 = await Profile.findOne({
         company: req.company.id
-      }).populate("company", ["name", "avatar", "country", "city"]);
+      }).populate("company", ["name", "avatar", "country", "city", "number"]);
       if (!profile1) {
         return res
           .status(400)
@@ -218,11 +218,10 @@ router.delete("/", auth, async (req, res) => {
 // access Public
 router.get("/stds", async (req, res) => {
   try {
-    let profiles = await Profile.find().populate("student", [
-      "name",
-      "avatar",
-      "qualification"
-    ]);
+    let profiles = await Profile.find({ company: undefined }).populate(
+      "student",
+      ["name", "avatar", "qualification"]
+    );
     res.json(profiles);
   } catch (error) {
     console.error(error.message);
@@ -234,12 +233,10 @@ router.get("/stds", async (req, res) => {
 // access Public
 router.get("/cmps", async (req, res) => {
   try {
-    const profiles = await Profile.find().populate("company", [
-      "name",
-      "country",
-      "avatar",
-      "city"
-    ]);
+    const profiles = await Profile.find({ student: undefined }).populate(
+      "company",
+      ["name", "country", "avatar", "city"]
+    );
     res.json(profiles);
   } catch (error) {
     console.error(error.message);
@@ -254,13 +251,13 @@ router.get("/user/:user_id", async (req, res) => {
     let profile, profile1;
     profile = await Profile.findOne({
       student: req.params.user_id
-    }).populate("student", ["name", "avatar", "qualification"]);
+    }).populate("student", ["name", "avatar", "qualification", "mobile"]);
     if (profile) {
       res.json(profile);
     } else if (!profile) {
       profile1 = await Profile.findOne({
         company: req.params.user_id
-      }).populate("company", ["name", "avatar", "country", "city"]);
+      }).populate("company", ["name", "avatar", "country", "city", "number"]);
       if (!profile1) {
         return res.status(400).json({ msg: "Profile not found" });
       }
@@ -271,22 +268,6 @@ router.get("/user/:user_id", async (req, res) => {
     if (err.kind == "ObjectId") {
       return res.status(400).json({ msg: "Profile not Found" });
     }
-    res.status(500).send("Server Error");
-  }
-});
-
-// route delete api/profile/cmp
-// desc Delete profile user
-// access Private
-router.delete("/cmp", auth, async (req, res) => {
-  try {
-    //Remove Profile
-    await Profile.findOneAndRemove({ company: req.company.id });
-    // remove Company
-    await Company.findOneAndRemove({ _id: req.company.id });
-    res.json({ msg: "Company Profile Deleted" });
-  } catch (error) {
-    console.error(error.message);
     res.status(500).send("Server Error");
   }
 });

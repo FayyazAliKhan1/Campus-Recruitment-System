@@ -1,9 +1,5 @@
 const mongoose = require("mongoose");
 const companySchema = mongoose.Schema({
-  student: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "students"
-  },
   name: {
     type: String,
     required: true

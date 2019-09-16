@@ -8,7 +8,25 @@ const Navbar = ({ auth: { isAuthenticated, loading }, logout }) => {
   const authLinks = (
     <ul>
       <li>
-        <a onClick={logout} href="#!">
+        <Link to="/companies">Companies</Link>{" "}
+      </li>
+      <li>
+        <Link to="/students">Students</Link>{" "}
+      </li>
+      <li>
+        <Link to="/profilesc">Company Profile</Link>
+      </li>
+      <li>
+        <Link to="/profiles">Student Profile</Link>
+      </li>
+      <li>
+        <Link to="/dashboard">
+          <i className="fas fa-user" />{" "}
+          <span className="hide-sm">Dashboard</span>
+        </Link>
+      </li>
+      <li>
+        <a onClick={logout} href="/">
           <i className="fas fa-sign-out-alt" />{" "}
           <span className="hide-sm">Logout</span>
         </a>
@@ -18,19 +36,23 @@ const Navbar = ({ auth: { isAuthenticated, loading }, logout }) => {
   const guestLinks = (
     <ul>
       <li>
-        <Link to="/companies">Companies</Link>
+        <Link to="/companies">Companies</Link>{" "}
       </li>
       <li>
-        <Link to="/student">Students</Link>
+        <Link to="/students">Students</Link>{" "}
+      </li>
+      <li>
+        <Link to="/profilesc">Company Profile</Link>
+      </li>
+      <li>
+        <Link to="/profiles">Student Profile</Link>
       </li>
       <li>
         <Link to="/admin">Admin</Link>
       </li>
       <li>
         <div className="dropdown">
-          <a className="dropbtn" href="#!">
-            Register
-          </a>
+          <a className="dropbtn">Register</a>
           <div className="dropdown-content">
             <Link to="/register">Company Registration</Link>
             <Link to="/registers">Student Registeration</Link>

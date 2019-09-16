@@ -10,6 +10,8 @@ import CreateProfileC from "./components/profile-forms/CreateProfileC";
 import EditProfile from "./components/profile-forms/EditProfile";
 import EditProfileC from "./components/profile-forms/EditProfileC";
 import AddExperience from "./components/profile-forms/AddExperience";
+import Profiles from "./components/Profiles/Profiles";
+import ProfilesC from "./components/Profiles/ProfilesC";
 import PrivateRoute from "./components/routing/PrivateRoute";
 import Login from "./components/auth/Login";
 import Register from "./components/auth/Register";
@@ -39,6 +41,8 @@ const App = () => {
               <Route exact path="/register" component={Register} />
               <Route exact path="/registers" component={Registers} />
               <Route exact path="/login" component={Login} />
+              <Route exact path="/profiles" component={Profiles} />
+              <Route exact path="/profilesc" component={ProfilesC} />
               <PrivateRoute
                 Route
                 exact

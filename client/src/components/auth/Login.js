@@ -48,9 +48,11 @@ const Login = ({ login, isAuthenticated }) => {
 
         <input type="submit" className="btn btn-primary" value="Login" />
       </form>
-      <p className="my-1">
-        Register Here if you have no Account <Link to="/register">Sign Up</Link>
-      </p>
+      <p className="my-1">Register Here if you have no Account </p>
+      <p>for Company</p>
+      <Link to="/register">Sign Up</Link>
+      <p>for Student</p>
+      <Link to="/registers">Sign Up</Link>
     </Fragment>
   );
 };

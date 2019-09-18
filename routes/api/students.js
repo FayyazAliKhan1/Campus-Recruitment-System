@@ -59,7 +59,9 @@ router.post(
       // See if student exists
       let student = await Student.findOne({ email });
       if (student) {
-        res.status(400).json({ errors: [{ msg: "Student already Exists" }] });
+        return res
+          .status(400)
+          .json({ errors: [{ msg: "Student already Exists" }] });
       }
       // Get students gravtar
       const avatar = gravatar.url(email, {
@@ -138,17 +140,12 @@ router.post(
           .status(400)
           .json({ msg: "you have already applied this job" });
       }
-      const student = await Student.findById(req.student.id).select(
-        "-password"
-      );
-      const job = await Job.findById(req.params.job_id).select("job_name");
+      const job = await Job.findById(req.params.job_id);
       app = new Applied({
         skills: Skills,
-        student_name: student.name,
-        avatar: student.avatar,
-        qualification: student.qualification,
         student: req.student.id,
         job_name: job.job_name,
+        company: job.company,
         job: req.params.job_id
       });
 

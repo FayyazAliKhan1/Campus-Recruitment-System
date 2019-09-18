@@ -5,9 +5,11 @@ import { Link } from "react-router-dom";
 import { getProfileById } from "../../actions/profile";
 import Spinner from "../layout/Spinner";
 import Top from "./Top";
+import Topc from "./Topc";
 import Experience from "./Experience";
 import Education from "./Education";
 import About from "./About";
+import Aboutc from "./Aboutc";
 import Github from "./Github";
 const Profile = ({
   getProfileById,
@@ -84,7 +86,7 @@ const Profile = ({
 };
 
 Profile.propTypes = {
-  profile: PropTypes.func.isRequired,
+  getProfileById: PropTypes.func.isRequired,
   auth: PropTypes.object.isRequired,
   profile: PropTypes.object.isRequired
 };

@@ -35,7 +35,7 @@ export const postJob = (formData, history) => async dispatch => {
     dispatch(setAlert("Job Posted", "success"));
     history.push("/dashboard");
   } catch (error) {
-    errors = error.response.data.errors;
+    const errors = error.response.data.errors;
     if (errors) {
       errors.forEach(error => dispatch(setAlert(error.msg, "danger")));
     }
@@ -46,11 +46,21 @@ export const postJob = (formData, history) => async dispatch => {
   }
 };
 //apply job
-export const applyJob = id => async dispatch => {
+export const applyJob = (id, formData, history) => async dispatch => {
   try {
-    const res = await axios.post(`/api/students/apply_job/${id}`);
+    const config = {
+      headers: {
+        "Content-Type": "application/json"
+      }
+    };
+    const res = await axios.post(
+      `/api/students/apply_job/${id}`,
+      formData,
+      config
+    );
     dispatch({ type: APPLY_JOB, payload: res.data });
     dispatch(setAlert("Applied Successfully", "success"));
+    history.push("/jobs");
   } catch (error) {
     dispatch({
       type: JOB_ERROR,

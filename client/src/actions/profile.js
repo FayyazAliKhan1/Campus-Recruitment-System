@@ -243,7 +243,7 @@ export const getProfileById = id => async dispatch => {
   }
 };
 //Get Git hub repos
-export const getGithubRepos = name => async dispatch => {
+export const getGitHubRepos = name => async dispatch => {
   try {
     const res = await axios.get(`/api/profile/github/${name}`);
     dispatch({

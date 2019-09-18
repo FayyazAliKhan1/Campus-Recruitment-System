@@ -4,15 +4,21 @@ import { connect } from "react-redux";
 import PropTypes from "prop-types";
 const DashboardAction = ({ user }) => (
   <div>
-    {user.age === undefined ? (
+    {user.age === undefined || user.age === null ? (
       <div className="dash-buttons">
         <Link to="/edit-profilec" className="btn btn-light">
           <i className="fas fa-user-circle text-primary" /> Edit Profile
         </Link>
         <Link to="/post-job" className="btn btn-light">
           {" "}
-          <i className="fas fa-job text-primary" />
+          <i className="fas fa-job-circle text-primary" />
           Post Job
+        </Link>
+        <Link to="get-jobs" className="btn btn-light">
+          Jobs Posted
+        </Link>
+        <Link to="applied-std" className="btn btn-light">
+          Applied Student
         </Link>
       </div>
     ) : (

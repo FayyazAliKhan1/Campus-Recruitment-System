@@ -12,10 +12,19 @@ import EditProfileC from "./components/profile-forms/EditProfileC";
 import AddExperience from "./components/profile-forms/AddExperience";
 import Profiles from "./components/Profiles/Profiles";
 import ProfilesC from "./components/Profiles/ProfilesC";
+import Profile from "./components/Profile/Profile";
 import PrivateRoute from "./components/routing/PrivateRoute";
 import Login from "./components/auth/Login";
 import Register from "./components/auth/Register";
 import Registers from "./components/auth/Registers";
+import Companies from "./components/user/Companies";
+import Students from "./components/user/Students";
+import Applieds from "./components/user/AppliedStudent";
+import Jobs from "./components/job/Jobs";
+import PostJob from "./components/job/PostJob";
+import GetPJobs from "./components/job/GetPJobs";
+import Apply from "./components/job/Apply";
+import AppliedStudent from "./components/user/AppliedStudent";
 import { Provider } from "react-redux";
 import store from "./store";
 import setAuthToken from "./utils/setAuthToken";
@@ -43,6 +52,10 @@ const App = () => {
               <Route exact path="/login" component={Login} />
               <Route exact path="/profiles" component={Profiles} />
               <Route exact path="/profilesc" component={ProfilesC} />
+              <Route exact path="/profile/:id" component={Profile} />
+              <Route exact path="/companies" component={Companies} />
+              <Route exact path="/students" component={Students} />
+              <Route exact path="/jobs" component={Jobs} />
               <PrivateRoute
                 Route
                 exact
@@ -85,6 +98,16 @@ const App = () => {
                 path="/add-education"
                 component={AddEducation}
               />
+              <PrivateRoute Route exact path="/post-job" component={PostJob} />
+              <PrivateRoute Route exact path="/get-jobs" component={GetPJobs} />
+              <PrivateRoute Route exact path="/applieds" component={Applieds} />
+              <PrivateRoute
+                Route
+                exact
+                path="/applied-std"
+                component={AppliedStudent}
+              />
+              <PrivateRoute Route exact path="/jobs/:id" component={Apply} />
             </Switch>
           </section>
         </Fragment>

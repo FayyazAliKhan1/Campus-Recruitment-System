@@ -28,56 +28,6 @@ router.get("/comp1", auth, async (req, res) => {
     res.status(500).send("Server error");
   }
 });
-// route POST api/jobs/:job_id
-// desc update Job
-// access private
-router.put(
-  "/:job_id",
-  [
-    auth,
-    [
-      check("job_name", "Job Name is Required")
-        .not()
-        .isEmpty(),
-      check("eligible_c", "Eligibility is Required")
-        .not()
-        .isEmpty(),
-      check("salary", "Salary is Required")
-        .not()
-        .isEmpty(),
-      check("description", "Description is Required")
-        .not()
-        .isEmpty()
-    ]
-  ],
-  async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-    const { job_name, eligible_c, salary, description } = req.body;
-    const newJob = {
-      job_name,
-      eligible_c,
-      salary,
-      description
-    };
-    try {
-      let job = await Job.findOneAndUpdate(
-        {
-          _id: req.params.job_id
-        },
-        { $set: newJob },
-        { new: true }
-      ); //look for a job by the company
-
-      res.json(job);
-    } catch (error) {
-      console.error(error.message);
-      res.status(500).send("Server Error");
-    }
-  }
-);
 // route GeT api/jobs
 // desc Get all jobs posted by companies
 // access public

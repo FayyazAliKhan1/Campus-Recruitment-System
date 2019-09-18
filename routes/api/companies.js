@@ -64,7 +64,9 @@ router.post(
       // See if company exists
       let company = await Company.findOne({ email });
       if (company) {
-        res.status(400).json({ errors: [{ msg: "Company already Exists" }] });
+        return res
+          .status(400)
+          .json({ errors: [{ msg: "Company already Exists" }] });
       }
       // Get company gravtar
       const avatar = gravatar.url(email, {
@@ -140,7 +142,10 @@ router.post(
     }
     const { job_name, eligible_c, salary, description } = req.body;
     try {
-      let job = await Job.findOne({ company: req.company.id, job_name });
+      let job = await Job.findOne({
+        company: req.company.id,
+        job_name
+      }).populate("company", ["name", "website"]);
 
       if (job) {
         return res
@@ -153,7 +158,7 @@ router.post(
         salary,
         description,
         company: req.company.id
-      }).populate("companies", ["name"]);
+      }).populate("company", ["name"]);
       await job.save();
       res.json(job);
     } catch (error) {
@@ -180,10 +185,10 @@ router.get("/", async (req, res) => {
 
 router.get("/applieds", auth, async (req, res) => {
   try {
-    const std_app = await Applied.find().populate("student", [
-      "name",
-      "avatar"
-    ]);
+    const std_app = await Applied.find({ company: req.company.id }).populate(
+      "student",
+      ["name", "avatar", "qualification"]
+    );
     res.json(std_app);
   } catch (error) {
     console.error(error.message);

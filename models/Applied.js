@@ -6,6 +6,10 @@ let Applied = new Schema({
     type: Schema.Types.ObjectId,
     ref: "jobs"
   },
+  company: {
+    type: Schema.Types.ObjectId,
+    ref: "companies"
+  },
   job_name: {
     type: String,
     required: true
@@ -16,18 +20,6 @@ let Applied = new Schema({
   },
   skills: {
     type: [String],
-    required: true
-  },
-  student_name: {
-    type: String,
-    required: true
-  },
-  avatar: {
-    type: String,
-    required: true
-  },
-  qualification: {
-    type: String,
     required: true
   },
   date: {

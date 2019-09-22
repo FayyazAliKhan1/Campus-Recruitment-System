@@ -3,7 +3,6 @@ const router = express.Router();
 const Student = require("../../models/Student");
 const Company = require("../../models/Company");
 const Applied = require("../../models/Applied");
-const Job = require("../../models/Jobs");
 const Profile = require("../../models/Profile");
 const auth = require("../../middleware/auth");
 const admin = require("../../middleware/admin");

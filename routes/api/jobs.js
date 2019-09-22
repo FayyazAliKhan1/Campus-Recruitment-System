@@ -40,30 +40,6 @@ router.get("/", async (req, res) => {
     res.status(500).send("Server error");
   }
 });
-
-// route GeT api/jobs/comp/:comp_id
-// desc Get job posted by company using company ID
-// access public
-router.get("/comp/:comp_id", async (req, res) => {
-  try {
-    const job = await Job.findOne({ company: req.params.comp_id }).populate(
-      "company",
-      ["name", "website"]
-    );
-    if (!job) {
-      return res
-        .status(400)
-        .json({ msg: "There is no Job Vacancy Posted by this company" });
-    }
-    res.json(job);
-  } catch (error) {
-    console.error(error.message);
-    if (error.kind == "ObjectId") {
-      return res.status(400).json({ msg: "Job not found" });
-    }
-    res.status(500).send("Server error");
-  }
-});
 // route Delete api/jobs/:job_id
 // desc delete job by id
 // access private

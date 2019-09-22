@@ -31,27 +31,13 @@ const StudentSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  isAdmin: Boolean,
+  isAdmin: {
+    type: Boolean,
+    default: false
+  },
   date: {
     type: Date,
     default: Date.now
   }
 });
-// const payload = {
-//   student: {
-//     id: this._id,
-//     isAdmin: this.isAdmin
-//   }
-// };
-// StudentSchema.methods.generateAuthToken = function() {
-//   jwt.sign(
-//     payload,
-//     config.get("jwtSecret"),
-//     { expiresIn: 360000 },
-//     (err, token) => {
-//       if (err) throw err;
-//       return token;
-//     }
-//   );
-// };
 module.exports = Student = mongoose.model("students", StudentSchema);

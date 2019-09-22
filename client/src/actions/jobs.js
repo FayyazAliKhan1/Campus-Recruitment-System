@@ -72,7 +72,7 @@ export const applyJob = (id, formData, history) => async dispatch => {
 export const deleteJob = id => async dispatch => {
   try {
     await axios.delete(`/api/jobs/${id}`);
-    dispatch({ type: DELETE_JOB });
+    dispatch({ type: DELETE_JOB, payload: id });
     dispatch(setAlert("Deleted Successfully", "success"));
   } catch (error) {
     dispatch({

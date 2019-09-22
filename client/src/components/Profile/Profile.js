@@ -26,17 +26,77 @@ const Profile = ({
         <Spinner />
       ) : (
         <Fragment>
-          <Link to="/profiles" className="btn btn-light">
-            Back
-          </Link>
           {auth.isAuthenticated &&
             auth.loading === false &&
-            auth.user._id === profile.user._id && (
-              <Link to="/edit-profile" className="btn btn-dark">
-                Edit Profile
-              </Link>
-            )}
-          {auth.isAuthenticated &&
+            auth.user._id === profile.user._id &&
+            (auth.user.age === undefined ? (
+              <div>
+                <Link to="/profilesc" className="btn btn-light">
+                  Back
+                </Link>
+                <Link to="/edit-profilec" className="btn btn-dark">
+                  Edit Profile
+                </Link>
+              </div>
+            ) : (
+              <div>
+                <Link to="/profiles" className="btn btn-light">
+                  Back
+                </Link>
+                <Link to="/edit-profile" className="btn btn-dark">
+                  Edit Profile
+                </Link>
+              </div>
+            ))}
+          {auth.isAuthenticated && auth.loading === false && (
+            <div className="profile-grid my-1">
+              {auth.user.age !== undefined ? (
+                <div>
+                  <Top profile={profile} />
+                  <About profile={profile} />
+                  <div className="profile-exp bg-white p-2">
+                    <h2 className="text-primary">Experience</h2>
+                    {profile.experience.length > 0 ? (
+                      <Fragment>
+                        {profile.experience.map(experience => (
+                          <Experience
+                            key={experience._id}
+                            experience={experience}
+                          />
+                        ))}
+                      </Fragment>
+                    ) : (
+                      <h4>No Experience Credentials</h4>
+                    )}
+                  </div>
+                  <div className="profile-edu bg-white p-2">
+                    <h2 className="text-primary">Education</h2>
+                    {profile.education.length > 0 ? (
+                      <Fragment>
+                        {profile.education.map(education => (
+                          <Education
+                            key={education._id}
+                            education={education}
+                          />
+                        ))}
+                      </Fragment>
+                    ) : (
+                      <h4>No Education Credentials</h4>
+                    )}
+                  </div>
+                  {profile.githubusername && (
+                    <Github username={profile.githubusername} />
+                  )}
+                </div>
+              ) : (
+                <div>
+                  <Topc profile={profile} />
+                  <Aboutc profile={profile} />
+                </div>
+              )}
+            </div>
+          )}
+          {/* {auth.isAuthenticated &&
           auth.loading === false &&
           auth.user.age !== undefined ? (
             <div className="profile-grid my-1">
@@ -78,7 +138,7 @@ const Profile = ({
               <Topc profile={profile} />
               <Aboutc profile={profile} />
             </div>
-          )}
+          )} */}
         </Fragment>
       )}
     </Fragment>

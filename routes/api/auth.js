@@ -12,14 +12,6 @@ const bcrypt = require("bcrypt");
 router.get("/", auth, async (req, res) => {
   const token = req.header("x-auth-token");
   try {
-    // const student = await Student.findById(req.student.id).select("-password");
-    // if (!student) {
-    //   const company = await Company.findById(req.company.id).select(
-    //     "-password"
-    //   );
-    //   return res.json(company);
-    // }
-    // res.json(student);
     const decoded = jwt.verify(token, config.get("jwtSecret"));
     if (decoded.student) {
       const student = await Student.findById(req.student.id).select(

@@ -32,8 +32,7 @@ export default function(state = initialState, action) {
     case DELETE_JOB:
       return {
         ...state,
-        job: null,
-        jobs: null,
+        jobs: state.jobs.filter(job => job._id !== payload),
         loading: false
       };
     case JOB_ERROR:
